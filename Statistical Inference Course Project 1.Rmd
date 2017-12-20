@@ -1,0 +1,93 @@
+---
+title: "Statistical Inference Course Project"
+author: "Michal Dzwolak"
+date: "19 December 2017"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Statistical Inference Course Project 1
+
+### A simulation exercise.
+
+As it was described in instructions we should create following variables and process calculations.
+The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations. 
+```{r variables}
+library(ggplot2)
+
+set.seed(123)
+
+n = 40
+  
+lambda = 0.2
+
+#Processing 1000 rexp
+dist = replicate(1000, rexp(n, lambda))
+
+#Preparing 1000 means 
+distmeans = apply(dist, 2, mean)
+
+distmeans = data.frame(distmeans)
+```
+
+####Data summary
+```{r sum}
+summary(distmeans)
+```
+
+#### Theoretical calculations
+```{r thor}
+meanx = 1/lambda
+varx = (1 / lambda)^2 / (n)
+sdx = (1/lambda) * (1/sqrt(n))
+```
+###Show the sample mean and compare it to the theoretical mean of the distribution.
+
+Theoretical is 1/lambda = 1/0.2 = 0.5
+
+Sample mean is 5.011
+
+###Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+
+Theoretical variance is `r (1 / lambda)^2 / (n)` 
+
+Sample variance is `r round(var(distmeans),4)`
+
+###Show that the distribution is approximately normal
+
+####Histogram 
+Please find a histogram representing distribution of a sample.
+
+Red vertical line represent mean of a distribution.
+```{r normal, warning=FALSE, message=FALSE}
+pl  = ggplot(data = data.frame(distmeans), aes(distmeans)) + geom_histogram(col = "white") + 
+  geom_vline(xintercept = mean(distmeans$distmeans), col = 'red', linetype = "dashed") +
+  xlab('Simulation means') + 
+  theme_light()
+print(pl)
+```
+
+####Sample distribution compared with normal distribution
+```{r density, warning=FALSE, message=FALSE}
+plotix= ggplot(data = data.frame(distmeans), aes(distmeans)) + 
+  stat_function(fun = dnorm, args = list(mean=meanx, sd = sdx), color="red") +
+  stat_function(fun = dnorm, args = list(mean=mean(distmeans$distmeans), sd = sd(distmeans$distmeans)),color="blue") + 
+  xlab("Distribution of means") + 
+  theme_light()
+print(plotix)
+```
+
+####Conclusion:
+Graph above shows that sample distribution is close to a normal distribution. Moreover, it was already proved that mean and variance are close to each other. 
+
+####Quantiles plot
+
+Anoher way to check if our distribution is normal distribution is to create quantiles plot and compare it to normal distribution. Its only graphical interpretation so results can be subiective to conclude. 
+
+```{r qq}
+qqnorm(distmeans$distmeans)
+```
+
+####Conclusion:
+As we can see distribution is close to normal one. Both ends of quantiles plot gives impression that analyzed distribution is not ideally normal.

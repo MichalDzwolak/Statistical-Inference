@@ -1,0 +1,87 @@
+---
+title: "Untitled"
+author: "Michal Dzwolak"
+date: "19 December 2017"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Statistical Inference Course Project 2
+
+### Basic Inferential Data Analysis Instructions.
+
+The second portion of the project, we're going to analyze the ToothGrowth data in the R datasets package. 
+
+1. Load the ToothGrowth data and perform some basic exploratory data analyses
+
+2. Provide a basic summary of the data.
+
+3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
+
+4. State your conclusions and the assumptions needed for your conclusions.
+
+####Load the ToothGrowth data and perform some basic exploratory data analyses
+
+```{r load, warning=FALSE, message=FALSE}
+library(ggplot2)
+
+upl = ToothGrowth
+
+str(upl)
+head(upl)
+is.data.frame(upl)
+
+ggplot(data = upl, aes(upl$len), fill=upl$supp) + geom_histogram(alpha=0.5, color = "black") +
+  facet_wrap(~upl$supp, ncol = 2, scales = "free") + 
+  theme_light() + 
+  ggtitle("ToothGrowth Histogram") + 
+  xlab('Len')
+```
+
+####Provide a basic summary of the data.
+```{r summ}
+summary(upl)
+```
+
+####Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
+
+T-test based on supplement type
+```{r supp}
+t.test(upl$len[upl$supp=="OJ"], upl$len[upl$supp=="VC"], paired = FALSE)
+```
+
+####Conclusion:
+
+As we can see p-value is above significance level 0.05 (0.06063). This is not enough to reject zero hypothesis. it means supplement type does not influence on Tooth Growth in Guinea Pigs.
+
+T-test based on dose 0.5 and 2
+```{r dose1}
+t.test(upl$len[upl$dose==0.5], upl$len[upl$dose==2], paired = FALSE)
+```
+
+####Conclusion: 
+
+p-value is far below significance level 0.05. We can not reject hyphothetis 0 that examinated means of samples are equal. It means difference in dose influence on influence on Tooth Growth in Guinea Pigs.
+
+T-test based on dose 0.5 and 1
+```{r dose2}
+t.test(upl$len[upl$dose==0.5], upl$len[upl$dose==1], paired = FALSE)
+```
+
+####Conclusion: 
+
+p-value is far below significance level 0.05. We can not reject hyphothetis 0 that examinated means of samples are equal. It means difference in dose influence on influence on Tooth Growth in Guinea Pigs.
+
+T-test based on dose 1 and 2
+```{r dose3}
+t.test(upl$len[upl$dose==1], upl$len[upl$dose==2], paired = FALSE)
+```
+
+####Conclusion: 
+
+p-value is far below significance level 0.05. We can not reject hyphothetis 0 that examinated means of samples are equal. It means difference in dose influence on influence on Tooth Growth in Guinea Pigs.
+
+###Final conclusion
+
+T.test performed on ToothGrowth dataset gives a answera that supplement type does not influence on Tooth Growth in Guinea Pigs. In opposition tho this statement, we got an information that dose level influence on Tooth Growth in Guinea Pigs.
